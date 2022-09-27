@@ -1,0 +1,134 @@
+begin:constant
+# Need to have charged deuterons
+# otherwise the collisions will not be activated
+q_D = 1
+end:constant
+
+begin:control
+  # Global number of grid points
+  nx = 400
+  ny = 400
+
+  # Final time of simulation
+  t_end = 1000 * femto
+  
+  # Start time for pushing particle
+  # here can we shift  the particle start to  
+  # disable particle motion ?
+
+  particle_tstart = 0. * femto
+
+  # Size of domain
+  x_min = -20.*100.  * micron
+  x_max = -x_min 
+  y_min = x_min
+  y_max = -y_min
+
+  stdout_frequency = 10
+  print_constants = T
+  print_eta_string = T
+
+  # modify the timestep 
+  #(for now default is used)
+  dt_multiplier = 0.95
+  
+  #Used for timing runs only 
+  #nprocy=1 #2 4 8 16 32 48
+  #nprocx=1
+  #print_eta_string = F
+  #balance_first = F
+  #use_pre_balance = F
+
+  #Used for random seed runs only
+  #use_random_seed = T
+end:control
+
+begin:boundaries
+  bc_x_min = periodic
+  bc_x_max = periodic
+  bc_y_min = periodic
+  bc_y_max = periodic
+end:boundaries
+
+begin:constant
+  den_d = 1.e26
+end:constant
+
+begin:species
+  name = deuteron
+  charge = q_D
+  mass = 1836.2*2
+  number_density = den_d
+  temp_ev = 5.e3
+  npart_per_cell = 1.e4
+  immobile = T  
+end:species 
+
+begin:species
+  name = neutron
+  charge = 0.0
+  mass = 1838.7
+  number_density = 0.
+  temp_ev = 0.
+  npart_per_cell = 0
+  immobile = T
+end:species 
+
+begin:species
+  name = helium
+  charge = q_D*2
+  mass = 5497.9
+  number_density = 0.
+  temp_ev = 0.
+  npart_per_cell = 0
+  immobile = T
+end:species 
+
+begin:collisions
+   use_collisions = T
+   use_nanbu = T
+   coulomb_log = auto
+   collide = deuteron deuteron 1e+10
+   collide = deuteron helium  off
+   collide = deuteron neutron off
+   collide = helium neutron  off 
+   collide = helium helium  off 
+   collide = neutron neutron off 
+end:collisions
+
+begin:output
+  # Simulated time between output dumps
+  dt_snapshot = 1000. * femto
+  full_dump_every = -1
+  restart_dump_every = -1
+  force_final_to_be_restartable = F
+
+  # Properties on grid
+  grid = always
+  ex = always
+  ey = always
+  ez = always
+  bx = restart
+  by = restart
+  bz = restart
+  total_energy_sum = always + species
+  absorption = always
+  number_density = always+species
+  #
+  ekbar = always + species 
+  charge_density = always
+  #
+  particles = always
+  particle_energy = always
+  particle_weight = always
+  vx = always
+  vy = always
+  vz = always
+  px = always
+  py = always
+  pz = always
+  mass = always
+  charge = always
+  relativistic_mass = always
+  gamma = always
+end:output

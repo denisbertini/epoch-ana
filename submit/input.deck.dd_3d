@@ -1,0 +1,120 @@
+begin:control
+  # Global number of grid points
+  nx = 4
+  ny = 4
+  nz = 10
+
+  # Final time of simulation
+  t_end = 3.3 * femto
+  # Start time for pushing particle
+  particle_tstart = 0. * femto
+
+  # Size of domain
+  x_min = -0.5 * micron
+  x_max = -x_min 
+  y_min = x_min
+  y_max = -y_min
+  z_min = 0. * micron
+  z_max = 10. *micron
+
+  stdout_frequency = 10
+  print_constants = T
+  print_eta_string = T
+  
+  #Used for timing runs only 
+  #nprocy=1 #2 4 8 16 32 48
+  #nprocx=1
+  #print_eta_string=F
+  #balance_first = F
+  #use_pre_balance = F
+
+  #Used for random seed runs only
+  #use_random_seed = T
+end:control
+
+begin:boundaries
+  bc_x_min = open
+  bc_x_max = open
+  bc_y_min = open
+  bc_y_max = open
+  bc_z_min = open
+  bc_z_max = open
+end:boundaries
+
+begin:constant
+  den_d = 1.e27
+end:constant
+
+begin:species
+  name = deuteron
+  charge = 1.0
+  mass = 1836.2*2
+  number_density = den_d
+  temp_ev = 5.e3
+  npart_per_cell = 1000
+end:species 
+
+
+begin:species
+  name = neutron
+  charge = 0.0
+  mass = 1838.7
+  number_density = 0.
+  temp_ev = 0.
+  npart_per_cell = 0
+end:species 
+
+
+begin:species
+  name = helium
+  charge = 0.0
+  mass = 5497.9
+  number_density = 0.
+  temp_ev = 0.
+  npart_per_cell = 0
+end:species 
+
+
+begin:collisions
+   use_collisions = T
+   use_nanbu = T
+   coulomb_log = auto
+   collide = deuteron deuteron 1e+13
+   collide = deuteron helium  off
+   collide = deuteron neutron off
+   collide = helium neutron  off 
+end:collisions
+
+
+
+begin:output
+  # Simulated time between output dumps
+  dt_snapshot = 1. * femto
+  full_dump_every = 1
+  # Properties on grid
+  grid = always
+  ex = always
+  ey = always
+  ez = always
+  bx = always
+  by = always
+  bz = always
+  total_energy_sum = always + species
+  absorption = always
+  number_density=always+species
+  ekbar = always
+  charge_density = always
+  particles = full
+  particle_energy = full
+  particle_weight = full
+  vx = full
+  vy = full
+  vz = full
+  px = full
+  py = full
+  pz = full
+  mass = full
+  charge = full
+  relativistic_mass = full
+  gamma = full
+end:output
